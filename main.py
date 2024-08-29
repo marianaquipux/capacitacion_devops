@@ -4,10 +4,15 @@ import json
 
 # Own libraries
 from fastapi import FastAPI
+from starlette.responses import RedirectResponse
 import uvicorn
 
-
 app = FastAPI()
+
+@app.get('/')
+def raiz():
+    return RedirectResponse(url='/docs/')
+
 
 @app.get('/lista-ordenada')
 def lista_ordenada(lista_no_ordenada: str) -> dict:
