@@ -1,3 +1,5 @@
+"""Módulo de FastAPI para operaciones básicas y verificación del estado de la API."""
+
 # External libraries
 from datetime import datetime
 
