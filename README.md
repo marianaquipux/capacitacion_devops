@@ -18,7 +18,7 @@ construcción y ejecución de la API.
    En la raíz del proyecto, ejecuta el siguiente comando para construir la imagen Docker:
 
    ```bash
-   docker build -t python-api:v1 .
+   docker build -t python-api:v1.0.0 .
    ```
 
 3. **Ejecutar el contenedor**
@@ -27,7 +27,7 @@ construcción y ejecución de la API.
    siguiente comando:
 
    ```bash
-   docker run -p 8000:8000 python-api
+   docker run -p 8000:8000 python-api:v1.0.0
    ```
 
    Esto mapeará el puerto 8000 del contenedor al puerto 8000 de tu máquina local,
