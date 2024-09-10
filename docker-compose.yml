@@ -16,7 +16,7 @@ services:
     entrypoint: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
 
   mongodb:
-    image: mongo:latest-alpine
+    image: mongo:latest
     container_name: mongodb
     networks:
       - mongodb-net
