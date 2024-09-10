@@ -23,6 +23,6 @@ services:
     ports:
       - "27017:27017"
 
-  networks:
-    mongodb-net:
-      driver: bridge
+networks:
+  mongodb-net:
+    driver: bridge
