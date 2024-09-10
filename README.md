@@ -89,3 +89,9 @@ Luego, puedes interactuar con la API usando herramientas como `curl`, `Postman`,
   ```text
   OK
   ```
+
+#### 4. Lista no ordenada
+
+  ```bash
+  curl "http://localhost:8000/guardar-lista-no-ordenada?lista-no-ordenada=%5B5,4,7,2,7,2%5D"
+  ```
