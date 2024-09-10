@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  python-api:
+    build: .
+    container_name: python-api:1.1.0
+    networks:
+      - mongodb-net
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    entrypoint: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    environment:
+      MONGO_HOST:
+      MONGO_PORT:
+    networks:
+      - mongodb-net
+    ports:
+      - "27017:27017"
+  networks:
+    mongodb-net:
+      driver: bridge
