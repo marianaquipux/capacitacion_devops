@@ -1,11 +1,10 @@
+"""Módulo de FastAPI para operaciones básicas y verificación del estado de la API."""
+
 # External libraries
 from datetime import datetime
-import json
 
-# Own libraries
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from starlette.responses import RedirectResponse
-import uvicorn
 
 app = FastAPI()
 
@@ -15,7 +14,9 @@ def raiz():
 
 
 @app.get('/lista-ordenada')
-def lista_ordenada(lista_no_ordenada: str) -> dict:
+def lista_ordenada(
+    lista_no_ordenada: str = Query(..., alias='lista-no-ordenada')
+) -> dict:
     """
     Ordena una lista de números y devuelve la lista ordenada junto con la hora actual del sistema.
 
@@ -27,14 +28,9 @@ def lista_ordenada(lista_no_ordenada: str) -> dict:
         lista de números ordenada de menor a mayor.
 
     """
-    lista_no_ordenada = json.loads(lista_no_ordenada)
-    lista_ordenada = sorted(lista_no_ordenada)
-
-    hora_sistema = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-
     return {
-        'hora_sistema': hora_sistema,
-        'lista_ordenada': lista_ordenada
+        'hora_sistema': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'lista_ordenada': sorted(lista_no_ordenada)
     }
 
 @app.get('/healthcheck')
@@ -46,4 +42,3 @@ def healthcheck() -> str:
         Cadena que indica que la API está funcionando correctamente.
     """
     return 'OK'
-
