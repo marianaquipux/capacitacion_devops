@@ -41,7 +41,7 @@ def lista_ordenada(
         lista de números ordenada de menor a mayor.
 
     """
-    lista_no_ordenada = [int(x) for x in lista_no_ordenada]
+    lista_no_ordenada = [int(x) for x in lista_no_ordenada.split(',')]
     return {
         'hora_sistema': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'lista_ordenada': sorted(lista_no_ordenada)
