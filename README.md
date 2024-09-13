@@ -4,41 +4,44 @@ Este proyecto contiene una API escrita en Python que se ejecuta utilizando Uvico
 dentro de un contenedor Docker. A continuación, se proporciona una guía para la configuración,
 construcción y ejecución de la API.
 
-## Configuración
+## Pasos para Desplegar el Proyecto
 
-1. **Clonar el repositorio**
+Construir y Levantar los Servicios: En el directorio donde tienes el archivo `docker-compose.yml`, ejecuta el siguiente comando para construir las imágenes y levantar los servicios:
 
-   ```bash
-   git clone <URL_DEL_REPOSITORIO>
-   cd <NOMBRE_DEL_REPOSITORIO>
-   ```
+docker compose up --build
 
-2. **Construir la imagen Docker**
+Este comando:
 
-   En la raíz del proyecto, ejecuta el siguiente comando para construir la imagen Docker:
+- Construirá la imagen del servicio `python-api` usando el Dockerfile en el directorio actual.
+- Descargaría la imagen de MongoDB y la ejecutaría.
+- Levantará ambos servicios y los conectará a través de la red `mongodb-net`.
 
-   ```bash
-   docker build -t python-api:v1.0.0 .
-   ```
+Verificar que los Contenedores Están Corriendo: Puedes verificar el estado de los contenedores con:
 
-3. **Ejecutar el contenedor**
+docker ps
 
-   Una vez que la imagen se haya construido correctamente, puedes ejecutar el contenedor con el
-   siguiente comando:
+Debes ver dos contenedores: `python-api` y `mongodb` en ejecución.
 
-   ```bash
-   docker run -p 8000:8000 python-api:v1.0.0
-   ```
+Acceder a la API: Una vez que los servicios estén arriba, puedes acceder a la API FastAPI en el navegador o mediante curl en la siguiente URL:
 
-   Esto mapeará el puerto 8000 del contenedor al puerto 8000 de tu máquina local,
-   permitiéndote acceder a la API a través de `http://localhost:8000`.
+http://localhost:8000
 
-## Uso
 
-Para ejecutar la API, inicia el contenedor Docker como se describe en la sección de ejecución.
-Luego, puedes interactuar con la API usando herramientas como `curl`, `Postman`, o cualquier cliente HTTP.
+Si deseas ver los logs de un servicio específico, como `python-api`:
 
-### Ejemplos de Endpoints
+docker compose logs python-api
+
+Detener y Eliminar los Contenedores: Para detener los contenedores sin eliminar los volúmenes, ejecuta:
+
+docker compose down
+
+Si también deseas eliminar los volúmenes asociados:
+
+docker compose down --volumes
+
+
+
+### Endpoints
 
 #### 1. Redirección a la documentación
 
