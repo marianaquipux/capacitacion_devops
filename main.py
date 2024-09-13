@@ -8,6 +8,8 @@ from starlette.responses import RedirectResponse
 from pymongo import MongoClient
 import uuid
 
+import json
+
 # Own libraries
 from config import get_mongo
 
@@ -39,6 +41,7 @@ def lista_ordenada(
         lista de números ordenada de menor a mayor.
 
     """
+    lista_no_ordenada = [int(x) for x in lista_no_ordenada]
     return {
         'hora_sistema': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
         'lista_ordenada': sorted(lista_no_ordenada)

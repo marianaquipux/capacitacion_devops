@@ -65,7 +65,8 @@ docker compose down --volumes
 - **Uso con `curl`**:
 
   ```bash
-  curl "http://localhost:8000/lista-ordenada?lista-no-ordenada=[5,4,7,2,7,2]"
+    curl "http://localhost:8000/lista-ordenada?lista-no-ordenada=%5B5%2C4%2C7%2C2%2C7%2C2%5D"
+
   ```
 
   **Respuesta Ejemplo**:
