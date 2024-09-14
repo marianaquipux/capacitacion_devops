@@ -14,4 +14,5 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Define el punto de entrada para iniciar el servidor
-ENTRYPOINT ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+ENTRYPOINT ["uvicorn", "main:app"]
+CMD ["--host", "0.0.0.0", "--port", "8000"]
