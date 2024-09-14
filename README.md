@@ -98,3 +98,22 @@ docker compose down --volumes
   ```bash
   curl "http://localhost:8000/guardar-lista-no-ordenada?lista-no-ordenada=%5B5,4,7,2,7,2%5D"
   ```
+
+
+# Configurar y levantar los contenedores manualmente sin un archivo docker-compose.yml
+
+# Crear la red mongodb-net
+docker network create mongodb-net
+
+# Iniciar MongoDB
+  ```bash
+  docker run -d --name mongodb --network mongodb-net -p 27017:27017 mongo:latest
+  ```
+
+# Iniciar el contenedor de Python con Uvicorn
+
+```bash
+docker build -t python-api:v1.1.0 .
+
+docker run -d --name python-api --network mongodb-net -p 8000:8000 -e MONGODB_HOST=mongodb -e MONGODB_PORT=27017 python-api:v1.1.0
+```
