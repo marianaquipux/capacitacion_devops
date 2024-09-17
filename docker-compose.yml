@@ -2,6 +2,7 @@
 services:
   python-api:
     build: .
+    hostname: python-api
     container_name: python-api
     networks:
       - mongodb-net
@@ -9,18 +10,35 @@ services:
       - "8000:8000"
     depends_on:
       - mongodb
-    env_file:
-      - .env
-    entrypoint: ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: always
+    environment:
+      - MONGODB_HOST
+      - MONGODB_PORT
+      - TZ
+    volumes:
+      - ./volumes/logs/info.log:/opt/python-api/logs/info.log
+    profiles:
+      - api
+      - back
 
   mongodb:
     image: mongo:latest
+    hostname: mongodb
     container_name: mongodb
     networks:
       - mongodb-net
     ports:
       - "27017:27017"
+    restart: always
+    volumes:
+      - mongodb-data:/data/db
+    profiles:
+      - db
+      - back
 
 networks:
   mongodb-net:
     driver: bridge
+
+volumes:
+  mongodb-data:
