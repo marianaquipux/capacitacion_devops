@@ -1,4 +1,3 @@
-
 services:
   python-api:
     build: .
