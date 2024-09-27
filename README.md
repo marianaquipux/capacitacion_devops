@@ -117,3 +117,44 @@ docker build -t python-api:v1.1.0 .
 
 docker run -d --name python-api --network mongodb-net -p 8000:8000 -e MONGODB_HOST=mongodb -e MONGODB_PORT=27017 python-api:v1.1.0
 ```
+
+
+# Configuración de Volúmenes en Docker Compose
+
+Este proyecto utiliza Docker Compose para levantar los servicios de `python-api` y `mongodb`. Aquí se explican los volúmenes configurados para ambos servicios.
+
+## Volumen en `python-api`
+
+El servicio `python-api` monta un archivo de logs desde el sistema de archivos del host hacia el contenedor.
+
+### Detalles del volumen:
+- **Fuente (host)**: `./volumes/logs/info.log`
+  - Esta ruta corresponde a un archivo en el sistema de archivos del host donde se almacenarán los logs generados por el contenedor `python-api`.
+- **Destino (contenedor)**: `/opt/python-api/logs/info.log`
+  - Dentro del contenedor, el archivo de logs se almacena en la ruta `/opt/python-api/logs/info.log`.
+
+### Propósito:
+Este volumen es un **bind mount**, lo que significa que cualquier cambio en el archivo `info.log` del host se reflejará en el contenedor, y viceversa. Se usa para almacenar los logs generados por la API en un archivo persistente en el host.
+
+```yaml
+volumes:
+  - ./volumes/logs/info.log:/opt/python-api/logs/info.log
+
+## Volumen en `mongodb`
+
+El servicio `mongodb` utiliza un **volumen nombrado** para almacenar de forma persistente los datos de la base de datos, incluso si el contenedor se detiene o elimina.
+
+### Detalles del volumen:
+- **Volumen nombrado**: `mongodb-data`
+  - Este volumen es gestionado por Docker. Se crea y administra automáticamente por Docker en el host. Al ser un volumen nombrado, Docker determina la ubicación donde se guardan los datos.
+- **Destino en el contenedor**: `/data/db`
+  - MongoDB guarda los datos de la base de datos en el directorio `/data/db` dentro del contenedor. Esta es la ruta por defecto para MongoDB.
+
+### Propósito:
+El volumen nombrado `mongodb-data` asegura que los datos de la base de datos de MongoDB se almacenen de manera persistente fuera del ciclo de vida del contenedor. Esto significa que los datos no se perderán si el contenedor se detiene o elimina, ya que permanecen almacenados en el volumen del host.
+
+```yaml
+
+volumes:
+  - mongodb-data:/data/db
+  
