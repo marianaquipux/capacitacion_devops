@@ -21,7 +21,7 @@ def monitorear_api():
         while True:
             response = requests.get(url)
 
-            if response.status_code == 200 and response.text == "OK":
+            if response.status_code == 200 and response.text == '"OK"':
                 logging.info(f"Healthcheck OK: {response.text}")
             else:
                 logging.error(f"Healthcheck fallo con estado {response.status_code} y respuesta: {response.text}")
