@@ -6,9 +6,9 @@ construcción y ejecución de la API.
 
 ## Pasos para Desplegar el Proyecto
 
-Construir y Levantar los Servicios: En el directorio donde tienes el archivo `docker-compose.yml`, ejecuta el siguiente comando para construir las imágenes y levantar los servicios:
+Construir y Levantar los Servicios: En el directorio donde tienes el archivo `docker-compose.yml`, ejecuta el siguiente comando para construir las imágenes y levantar todos los servicios:
 
-docker compose up --build
+docker compose --profile back up -d --build
 
 Este comando:
 
@@ -38,8 +38,6 @@ docker compose down
 Si también deseas eliminar los volúmenes asociados:
 
 docker compose down --volumes
-
-
 
 ### Endpoints
 
@@ -94,6 +92,10 @@ docker compose down --volumes
   ```
 
 #### 4. Lista no ordenada
+
+- **Endpoint**: `/guardar-lista-no-ordenada`
+- **Descripción**: Guarda una lista no ordenada en MongoDB junto con la hora del sistema y un identificador único.
+- **Uso con `curl`**:
 
   ```bash
   curl "http://localhost:8000/guardar-lista-no-ordenada?lista-no-ordenada=%5B5,4,7,2,7,2%5D"
