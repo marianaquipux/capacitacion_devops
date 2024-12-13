@@ -160,3 +160,96 @@ El volumen nombrado `mongodb-data` asegura que los datos de la base de datos de 
 volumes:
   - mongodb-data:/data/db
   
+
+# Proyecto de Monitoreo de API con Docker
+
+Este proyecto tiene como objetivo crear un sistema de monitoreo de un contenedor que expone un API con un endpoint `/healthcheck`. El contenedor de monitoreo realiza solicitudes periódicas al endpoint y registra los resultados en un archivo de log. A continuación, se explica cómo ejecutar el proyecto y configurar los diferentes aspectos.
+
+## Requisitos
+
+- Docker y Docker Compose instalados.
+- Acceso a un contenedor que expone un API con el endpoint `/healthcheck` (por ejemplo, `python-api`).
+- El contenedor de monitoreo estará configurado para verificar el estado de este API periódicamente.
+
+## Pasos para Ejecutar el Proyecto
+
+### 1. Configurar las Variables de Entorno
+
+Antes de ejecutar los contenedores, es necesario configurar las variables de entorno que controlan el contenedor de monitoreo.
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables:
+
+```bash
+TARGET_CONTAINER_HOST=python-api
+TARGET_CONTAINER_PORT=8000
+CHECK_INTERVAL=5
+TZ=America/Bogota
+```
+
+- `TARGET_CONTAINER_HOST`: Nombre o IP del contenedor a monitorear (por ejemplo, `python-api`).
+- `TARGET_CONTAINER_PORT`: Puerto del contenedor a monitorear (por ejemplo, `8000`).
+- `CHECK_INTERVAL`: Tiempo en segundos entre cada solicitud de monitoreo (por ejemplo, `5`).
+- `TZ`: Zona horaria para el contenedor de monitoreo (por ejemplo, `America/Bogota`).
+
+> **Nota**: No olvides agregar el archivo `.env` al archivo `.gitignore` para evitar exponer información sensible.
+
+### 2. Configuración del Archivo Docker Compose
+
+El archivo `docker-compose.yml` define la infraestructura del proyecto, con dos contenedores: el contenedor de monitoreo (`api-monitor`) y el contenedor objetivo (`python-api`).
+
+- **Contenedor `python-api`**: Este contenedor expone el API con el endpoint `/healthcheck`.
+- **Contenedor `api-monitor`**: Este contenedor ejecuta el script de monitoreo que realiza las solicitudes al endpoint `/healthcheck` del contenedor `python-api`.
+- **Volumen de Logs**: Se monta un volumen bind en `./volumes/logs/api-monitor.log` para almacenar los logs del monitoreo de manera persistente.
+
+### 3. Crear los Archivos del Contenedor de Monitoreo
+
+#### 3.1. Dockerfile para el Servicio `api-monitor`
+
+Dentro de la carpeta `api-monitor`, crea un archivo `Dockerfile.monitor` que definirá cómo construir el contenedor de monitoreo:
+
+```Dockerfile
+FROM python:3.12-slim
+
+# Crear directorios necesarios
+RUN mkdir -p /opt/monitor/logs
+
+# Copiar el script de monitoreo
+COPY monitor_script.py /opt/monitor/monitor_script.py
+
+# Instalar las librerías necesarias
+RUN pip install requests
+
+# Establecer el punto de entrada
+ENTRYPOINT ["python", "/opt/monitor/monitor_script.py"]
+```
+
+#### 3.2. Script de Monitoreo (`monitor_script.py`)
+
+Crea el script `monitor_script.py` dentro de la carpeta `api-monitor` que realiza las solicitudes al endpoint `/healthcheck`:
+
+Este script realiza solicitudes al endpoint `/healthcheck` y registra los resultados en un archivo de log. Si la respuesta es válida (código 200 y contiene "OK"), registra un mensaje de información. Si la solicitud falla, registra un mensaje de error.
+
+### 4. Ejecutar los Servicios con Docker Compose
+
+Para iniciar todos los servicios definidos en `docker-compose.yml`, ejecuta el siguiente comando:
+
+```bash
+docker-compose --profile back up -d --build
+```
+
+Este comando construye las imágenes necesarias y ejecuta los contenedores. El contenedor `api-monitor` comenzará a realizar solicitudes periódicas al contenedor `python-api` y almacenará los logs en `./volumes/logs/api-monitor.log`.
+
+### 5. Verificar el Archivo de Logs
+
+El archivo `./volumes/logs/api-monitor.log` debe irse llenando con los resultados de las solicitudes al endpoint `/healthcheck`. Un ejemplo de salida en el log sería:
+
+```text
+2024-09-26 12:30:00,123 - INFO - Se hizo la solicitud al endpoint http://python-api:8000/healthcheck y devolvió OK
+2024-09-26 12:30:05,456 - ERROR - Se hizo la solicitud al endpoint http://python-api:8000/healthcheck y devolvió error: Código de estado: 500, Respuesta: Internal Server Error
+```
+
+## Documentación del Proyecto
+
+- **Variables de entorno**: El archivo `.env` define las variables necesarias para configurar el contenedor de monitoreo. Recuerda que este archivo debe ser añadido al `.gitignore`.
+- **Volúmenes**: Se usa un volumen bind para almacenar los logs de monitoreo en el archivo `volumes/logs/api-monitor.log`, lo que permite que los logs persistan incluso después de reiniciar los contenedores.
+- **Política de reinicio**: El contenedor `api-monitor` tiene la política de reinicio `always`, lo que garantiza que el contenedor se reinicie automáticamente si se detiene o falla.
+- **Red**: Ambos contenedores están conectados a la misma red (`monitor_network`), lo que permite que se comuniquen entre sí.
