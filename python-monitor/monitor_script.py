@@ -1,3 +1,6 @@
+"""Módulo con funcionalidades para monitorear el el API 'python_api'."""
+
+# External libraries
 import logging
 import os
 import requests

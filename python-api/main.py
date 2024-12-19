@@ -1,51 +1,20 @@
 """Módulo de FastAPI para operaciones básicas y verificación del estado de la API."""
 
 # External libraries
-from datetime import datetime
+import json
+import uuid
 
+from datetime import datetime
 from fastapi import FastAPI, Query
 from starlette.responses import RedirectResponse
 from pymongo import MongoClient
-import uuid
 
-import json
 
 # Own libraries
 from config import get_mongo
 
 app = FastAPI()
 
-
-@app.get('/')
-def raiz():
-    """Redirige la solicitud de la raíz ('/') a la documentación de la API.
-
-    Returns:
-        RedirectResponse: Una respuesta de redirección a '/docs/'.
-
-    """
-    return RedirectResponse(url='/docs/')
-
-@app.get('/lista-ordenada')
-def lista_ordenada(
-    lista_no_ordenada: str = Query(..., alias='lista-no-ordenada')
-) -> dict:
-    """Ordena una lista de números y devuelve la lista ordenada junto con la hora
-     actual del sistema.
-
-    Args:
-        lista_no_ordenada: Lista de números enteros no ordenada en formato JSON.
-
-    Returns:
-        La hora actual del sistema en formato 'YYYY-MM-DD HH:MM:SS' y la
-        lista de números ordenada de menor a mayor.
-
-    """
-    lista_no_ordenada = [int(x) for x in lista_no_ordenada.split(',')]
-    return {
-        'hora_sistema': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        'lista_ordenada': sorted(lista_no_ordenada)
-    }
 
 @app.get('/healthcheck')
 def healthcheck() -> str:
@@ -90,3 +59,36 @@ def guardar_lista_no_ordenada(
     coleccion.insert_one(documento)
 
     return {'msg': f'La lista ordenada fue guardada con el id: {id_unico}'}
+
+
+@app.get('/lista-ordenada')
+def lista_ordenada(
+    lista_no_ordenada: str = Query(..., alias='lista-no-ordenada')
+) -> dict:
+    """Ordena una lista de números y devuelve la lista ordenada junto con la hora
+     actual del sistema.
+
+    Args:
+        lista_no_ordenada: Lista de números enteros no ordenada en formato JSON.
+
+    Returns:
+        La hora actual del sistema en formato 'YYYY-MM-DD HH:MM:SS' y la
+        lista de números ordenada de menor a mayor.
+
+    """
+    lista_no_ordenada = [int(x) for x in lista_no_ordenada.split(',')]
+    return {
+        'hora_sistema': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+        'lista_ordenada': sorted(lista_no_ordenada)
+    }
+
+
+@app.get('/')
+def raiz():
+    """Redirige la solicitud de la raíz ('/') a la documentación de la API.
+
+    Returns:
+        RedirectResponse: Una respuesta de redirección a '/docs/'.
+
+    """
+    return RedirectResponse(url='/docs/')
